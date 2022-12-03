@@ -1,6 +1,7 @@
 import {
-  createBrowserRouter,
-  RouterProvider,
+  BrowserRouter as Router,
+  Routes,
+  Route,
 } from "react-router-dom";
 import {createTheme, ThemeProvider} from '@mui/material/styles';
 import Header from "./components/Header";
@@ -8,17 +9,6 @@ import A700 from '@mui/material/colors/green';
 import './App.css';
 import Crawl from "./components/Crawl";
 import Search from "./components/Search";
-
-const router = createBrowserRouter([
-  {
-    path: "/",
-    element: <Crawl />,
-  },
-  {
-    path: "/search",
-    element: <Search />,
-  },
-]);
 
 const theme = createTheme({
   palette: {
@@ -32,8 +22,13 @@ function App() {
   return (
     <div className="App">
       <ThemeProvider theme={theme}>
-        <Header />
-        <RouterProvider router={router} />
+        <Router>
+          <Header />
+          <Routes>
+            <Route path="/search" element={<Search />} />
+            <Route path="/" element={<Crawl />} />
+          </Routes>
+        </Router>
       </ThemeProvider>
     </div>
   );
