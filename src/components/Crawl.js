@@ -35,7 +35,7 @@ export default function Crawl() {
           link_count: 0
         });
       }
-      setMessage(response.message);
+      setMessage("Crawl started successfully, please refresh to check the status of the crawler");
     }
     else {
       setMessage("found existing crawl");
