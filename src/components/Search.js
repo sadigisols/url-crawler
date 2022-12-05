@@ -80,7 +80,7 @@ export default function Search() {
         >
           <MenuItem value=' ' disabled><em>Select URL</em></MenuItem>
           {crawls && crawls.map(crawl => {
-            return (<MenuItem value={crawl.id}>{crawl.url}</MenuItem>)
+            return (<MenuItem key={crawl.id} value={crawl.id}>{crawl.url}</MenuItem>)
           })}
         </Select>
         <InputBase
