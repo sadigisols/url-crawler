@@ -72,16 +72,17 @@ export default function Crawl() {
       <Typography variant="h6" component="div" color='primary'>{message}</Typography>
       {crawlResult &&
         <div>
+          <Typography sx={{marginTop: '20px'}} variant="h6" color="primary">URL: {crawlResult.url}</Typography>
           <Grid container sx={{marginTop: '20px'}} spacing={2}>
-            <Grid item md={6}>
+            <Grid item md={6} xs={12}>
               <Card variant="outlined">
                 <CardContent>
-                  <Typography variant="h4" color="primary">{crawlResult.url}</Typography>
-                  <Typography variant="caption">URL</Typography>
+                  <Typography variant="h4" color="primary">{crawlResult.status}</Typography>
+                  <Typography variant="caption">Status</Typography>
                 </CardContent>
               </Card>
             </Grid>
-            <Grid item md={6}>
+            <Grid item md={6} xs={12}>
               <Card variant="outlined">
                 <CardContent>
                   <Typography variant="h4" color="primary">{new Date(crawlResult.last_updated).toLocaleString()}</Typography>
@@ -89,7 +90,7 @@ export default function Crawl() {
                 </CardContent>
               </Card>
             </Grid>
-            <Grid item md={6}>
+            <Grid item md={6} xs={12}>
               <Card variant="outlined">
                 <CardContent>
                   <Typography variant="h1" color="primary">{crawlResult.link_count}</Typography>
@@ -97,7 +98,7 @@ export default function Crawl() {
                 </CardContent>
               </Card>
             </Grid>
-            <Grid item md={6}>
+            <Grid item md={6} xs={12}>
               <Card variant="outlined">
                 <CardContent>
                   <Typography variant="h1" color="primary">{crawlResult.comment_count}</Typography>
@@ -106,7 +107,7 @@ export default function Crawl() {
               </Card>
             </Grid>
           </Grid>
-          <div>
+          <div style={{marginTop: '20px'}}>
             <Button color='primary' onClick={() => reset()}>Reset</Button>
             <Button color='primary' disabled>Recrawl</Button>
           </div>

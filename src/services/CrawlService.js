@@ -2,8 +2,16 @@ export default class CrawlService {
   constructor() {
     this.baseUrl = 'https://url-crawler-api.azurewebsites.net'
   }
+
   async getCrawlResult(url) {
     const response = await fetch(this.baseUrl + "/crawl?url=" + url)
+    const result = await response.json();
+
+    return result;
+  }
+
+  async getCrawls() {
+    const response = await fetch(this.baseUrl + "/crawl")
     const result = await response.json();
 
     return result;

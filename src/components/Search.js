@@ -7,13 +7,63 @@ import SearchIcon from '@mui/icons-material/Search';
 import Container from '@mui/material/Container';
 import Select from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
+import Typography from '@mui/material/Typography';
+import CrawlService from '../services/CrawlService';
+import CommentService from '../services/CommentService';
+import {List, ListItem, ListItemText} from '@mui/material';
 
 export default function Search() {
-  const [url, setUrl] = React.useState(' ');
+  const [keyword, setKeyWord] = React.useState('');
+  const [crawlId, setCrawlId] = React.useState(' ');
+  const [message, setMessage] = React.useState('');
+  const [crawls, setCrawls] = React.useState(null);
+  const [comments, setComments] = React.useState(null);
+  const [searchResult, setSearchResult] = React.useState(null);
 
-  const handleChange = (event) => {
-    setUrl(event.target.value);
+
+  React.useEffect(() => {
+    async function getCrawls() {
+      if (crawls != null) {
+        return;
+      }
+      let service = new CrawlService();
+      let cs = await service.getCrawls();
+      setCrawls(cs);
+      setMessage("Select a URL to perform keywork search");
+    }
+    getCrawls();
+  })
+
+  const handleCrawlerChange = async (event) => {
+    let crawlId = event.target.value;
+    setCrawlId(crawlId)
+    let service = new CommentService();
+    let comments = await service.getComments(crawlId);
+    setComments(comments);
+    setSearchResult(comments);
+    let count = comments.length;
+    setMessage("Total comments found: " + count);
   };
+
+  const handleSearch = () => {
+    if (comments == null) {
+      setMessage("Select a crawl URL before performing search");
+    }
+    if (keyword == null) {
+      setSearchResult(comments);
+      return;
+    }
+    let searchResult = [];
+    comments.forEach(comment => {
+      if (comment.comment.indexOf(keyword) !== -1) {
+        let parts = comment.comment.split(new RegExp(`(${keyword})`, 'gi'));
+        comment.commentinparts = parts;
+        searchResult.push(comment)
+      }
+    });
+    setSearchResult(searchResult);
+    setMessage("Total comments found with the keyword " + keyword + ": " + searchResult.length);
+  }
 
   return (
     <Container fluid="true" sx={{marginTop: '20px'}}>
@@ -24,25 +74,50 @@ export default function Search() {
         <Select sx={{width: '30%'}}
           labelId="demo-simple-select-label"
           id="demo-simple-select"
-          value={url}
-          label="Select URL"
-          onChange={handleChange}
+          value={crawlId}
+          color="primary"
+          onChange={handleCrawlerChange}
         >
           <MenuItem value=' ' disabled><em>Select URL</em></MenuItem>
-          <MenuItem value={10}>https://forums.elderscrollsonline.com/en/discussion/616021/pc-eu-hardware-update-august-2022</MenuItem>
-          <MenuItem value={20}>https://forums.elderscrollsonline.com/en/discussion/394909/fashion-megathread</MenuItem>
-          <MenuItem value={30}>https://forums.elderscrollsonline.com/en/discussion/595442/eso-pvp-update-updated-june-2022</MenuItem>
+          {crawls && crawls.map(crawl => {
+            return (<MenuItem value={crawl.id}>{crawl.url}</MenuItem>)
+          })}
         </Select>
         <InputBase
           sx={{ml: 1, flex: 1}}
           placeholder="Enter Keyword"
           inputProps={{'aria-label': 'enter URL to crawl'}}
+          value={keyword}
+          onChange={e => setKeyWord(e.target.value)}
         />
         <Divider sx={{height: 28, m: 0.5}} orientation="vertical" />
-        <IconButton color="primary" sx={{p: '10px'}} aria-label="directions">
+        <IconButton color="primary" sx={{p: '10px'}} aria-label="directions"
+          onClick={() => handleSearch()}>
           <SearchIcon />
         </IconButton>
       </Paper>
+      <Typography variant="h6" component="div" color='primary'>{message}</Typography>
+      <List>
+        {searchResult && searchResult.map(s => {
+          return (
+            <ListItem alignItems='flex-start' key={s.id}>
+              <ListItemText primary={s.title} secondary={
+                <React.Fragment>
+                  <Typography variant="caption" color="primary" sx={{display: 'inline'}}>{new Date(s.comment_time).toLocaleString()} </Typography>
+                  {s.commentinparts ? s.commentinparts.map((part, i) => {
+                    return (
+                      <span key={i} className={part === keyword ? "highlightedText" : ""}>
+                        {part}
+                      </span>
+                    )
+                  }) : s.comment}
+                  <br />
+                  <a href={s.url} rel="noreferrer" target="_blank">{s.url}</a>
+                </React.Fragment>} />
+            </ListItem>
+          )
+        })}
+      </List>
     </Container>
   );
 }

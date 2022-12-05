@@ -11,3 +11,8 @@ a {
   color: #00c853;
 }
 
+.highlightedText {
+  background-color: yellow;
+  color: black;
+  font-weight: bold;
+}
