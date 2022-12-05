@@ -10,7 +10,7 @@ import MenuItem from '@mui/material/MenuItem';
 import Typography from '@mui/material/Typography';
 import CrawlService from '../services/CrawlService';
 import CommentService from '../services/CommentService';
-import {List, ListItem, ListItemText} from '@mui/material';
+import {Avatar, List, ListItem, ListItemAvatar, ListItemText} from '@mui/material';
 
 export default function Search() {
   const [keyword, setKeyWord] = React.useState('');
@@ -101,16 +101,21 @@ export default function Search() {
         {searchResult && searchResult.map(s => {
           return (
             <ListItem alignItems='flex-start' key={s.id}>
+              <ListItemAvatar>
+                <Avatar alt={s.username} src={s.profile_image} />
+              </ListItemAvatar>
               <ListItemText primary={s.title} secondary={
                 <React.Fragment>
-                  <Typography variant="caption" color="primary" sx={{display: 'inline'}}>{new Date(s.comment_time).toLocaleString()} </Typography>
+                  <Typography variant="caption" color="secondary"><b>{s.username}</b></Typography> -&nbsp;
+                  <Typography variant="caption" color="primary" sx={{display: 'inline'}}>
+                    {new Date(s.comment_time).toLocaleString()} </Typography> <br />
                   {s.commentinparts ? s.commentinparts.map((part, i) => {
                     return (
-                      <span key={i} className={part === keyword ? "highlightedText" : ""}>
+                      <Typography variant="body1" sx={{display: 'inline'}} key={i} className={part === keyword ? "highlightedText" : ""}>
                         {part}
-                      </span>
+                      </Typography>
                     )
-                  }) : s.comment}
+                  }) :  <Typography variant="body1">{s.comment}</Typography>}
                   <br />
                   <a href={s.url} rel="noreferrer" target="_blank">{s.url}</a>
                 </React.Fragment>} />

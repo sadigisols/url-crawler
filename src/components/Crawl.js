@@ -49,6 +49,14 @@ export default function Crawl() {
     setUrl('');
   }
 
+  async function refresh() {
+    setMessage("Refreshing crawl data");
+    let service = new CrawlService();
+    let result = await service.getCrawlResult(url);
+    setCrawlResult(result);
+    setMessage("");
+  }
+
   let margin = crawlResult ? '20px' : '25%';
   return (
     <Container fluid="true" sx={{marginTop: margin}}>
@@ -109,6 +117,7 @@ export default function Crawl() {
           </Grid>
           <div style={{marginTop: '20px'}}>
             <Button color='primary' onClick={() => reset()}>Reset</Button>
+            <Button color='primary' onClick={() => refresh()}>Refresh</Button>
             <Button color='primary' disabled>Recrawl</Button>
           </div>
         </div>
